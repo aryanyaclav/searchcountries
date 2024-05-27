@@ -1,0 +1,14 @@
+.countryCard{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    height: 250px;
+    width: 180px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+}
+
+img{
+    height: 50%;
+    width: 100%;
+}
