@@ -1,11 +1,11 @@
 import React from 'react'
-import styles from './Card.module.css'
+import './Card.css'
 
 export default function Card({country, flag}) {
   return (
-    <div className={styles.countryCard}>
+    <div className='countryCard'>
         <img src={flag} alt={country} />
-        {country}
+        <div>{country}</div>
     </div>
   )
 }
