@@ -1,49 +1,77 @@
 import React, { useEffect, useState } from 'react'
+
 import styles from './FlagsComp.module.css'
 import Card from './Card'
 
 export default function FlagsComp() {
-    let [countries, setCountries] = useState([])
-    let [searchedCountries, setSearchedCountries] = useState([])
-    let [searchQuery, setSearchQuery] = useState('')
-    let [searched, setSearched] = useState(false)
+    const [countries, setCountries] = useState([])
+    const [searchedCountries, setSearchedCountries] = useState([])
+    const [searchQuery, setSearchQuery] = useState('')
+    const [searched, setSearched] = useState(false)
+    const [loading, setLoading] = useState(true)
+    const [error, setError] = useState(null)
 
-    let countriesApi = "https://restcountries.com/v3.1/all"
+    const countriesApi = "https://restcountries.com/v3.1/all"
 
     useEffect(() => {
-        fetch(countriesApi).then((res) => res.json()).then((data) => setCountries(data)).catch((err) => console.log(err))
+        fetch(countriesApi)
+            .then((res) => {
+                if (!res.ok) {
+                    throw new Error('Network response was not ok')
+                }
+                return res.json()
+            })
+            .then((data) => {
+                setCountries(data)
+                setLoading(false)
+            })
+            .catch((err) => {
+                console.error(err)
+                setError(err.message)
+                setLoading(false)
+            })
     }, [])
 
-    let handleSearch = (e) => {
-        console.log(e.target.value)
-        let searchedValue = e.target.value
-        if(searchedValue.length > 0){
-            setSearched(true)
-        }else{
-            setSearched(false)
-        }
-        setSearchQuery(e.target.value)
-        let countrySearched = countries.filter(country => country.name.common.includes(searchedValue) )
+    const handleSearch = (e) => {
+        const searchedValue = e.target.value
+        setSearchQuery(searchedValue)
+        setSearched(searchedValue.length > 0)
+
+        const countrySearched = countries.filter(country => 
+            country.name.common.toLowerCase().includes(searchedValue.toLowerCase())
+        )
         setSearchedCountries(countrySearched)
-        
     }
 
-  return (
-    <div>
-        <div className={styles.inputContainer}>
-            <input type="text" onChange={handleSearch} value={searchQuery} placeholder="Search for countries"/>
+    if (loading) {
+        return <div>Loading...</div>
+    }
+
+    if (error) {
+        return <div>Error: {error}</div>
+    }
+
+    return (
+        <div>
+            <div className={styles.inputContainer}>
+                <input 
+                    type="text" 
+                    onChange={handleSearch} 
+                    value={searchQuery} 
+                    placeholder="Search for countries"
+                />
+            </div>
+            <div className={styles.container}>
+                {
+                    searched ? 
+                    searchedCountries.map((country) => (
+                        <Card key={country.cca3} country={country.name.common} flag={country.flags.png} />
+                    )) : 
+                    countries.map((country) => (
+                        <Card key={country.cca3} country={country.name.common} flag={country.flags.png} />
+                    ))
+                }
+            </div>
         </div>
-        <div className={styles.container}>
-        {
-            searched ? 
-            searchedCountries.map((country) => {
-                    return <Card country={country.name.common} flag={country.flags.png}/>
-                }) : countries.map((country) => {
-                    return <Card country={country.name.common} flag={country.flags.png}/>
-                })
-        }
-        </div>
-    </div>
-  )
+    )
 }
-// added
