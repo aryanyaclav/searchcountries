@@ -16,7 +16,7 @@ export default function FlagsComp() {
 
     useEffect(() => {
         fetchData(countriesApi)
-    })
+    }, [])
 
     let handleSearch = (e) => {
         console.log(e.target.value)
