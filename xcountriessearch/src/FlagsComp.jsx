@@ -10,12 +10,8 @@ export default function FlagsComp() {
 
     let countriesApi = "https://restcountries.com/v3.1/all"
 
-    let fetchData = (url) => {
-        fetch(url).then((res) => res.json()).then((data) => setCountries(data)).catch((err) => console.log(err))
-    }
-
     useEffect(() => {
-        fetchData(countriesApi)
+        fetch(countriesApi).then((res) => res.json()).then((data) => setCountries(data)).catch((err) => console.log(err))
     }, [])
 
     let handleSearch = (e) => {
